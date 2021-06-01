@@ -2,7 +2,6 @@ async-generator==1.10
 certifi==2021.5.30
 cloudpickle==1.6.0
 cycler==0.10.0
-Cython
 dask==2021.5.0
 fsspec==2021.5.0
 ipython-genutils==0.2.0

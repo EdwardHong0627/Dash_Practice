@@ -12,7 +12,7 @@ ARG NIFI_TOOLKIT_BINARY_PATH=${NIFI_TOOLKIT_BINARY_PATH:-/nifi/${NIFI_VERSION}/n
 ENV NIFI_BASE_DIR=/opt/nifi
 ENV NIFI_HOME ${NIFI_BASE_DIR}/nifi-current
 ENV NIFI_TOOLKIT_HOME ${NIFI_BASE_DIR}/nifi-toolkit-current
-ENV SCRIPTPATH=${NIFI_HOME}}/python_code
+ENV SCRIPTPATH=${NIFI_HOME}/python_code
 ENV NIFI_PID_DIR=${NIFI_HOME}/run
 ENV NIFI_LOG_DIR=${NIFI_HOME}/logs
 
@@ -50,12 +50,11 @@ RUN curl -fSL ${MIRROR_BASE_URL}/${NIFI_BINARY_PATH} -o ${NIFI_BASE_DIR}/nifi-${
     && mkdir -p ${NIFI_HOME}/flowfile_repository \
     && mkdir -p ${NIFI_HOME}/content_repository \
     && mkdir -p ${NIFI_HOME}/provenance_repository \
-	&& mkdir -p ${SCRIPTPATH}\
+
     && mkdir -p ${NIFI_HOME}/state \
     && mkdir -p ${NIFI_LOG_DIR} \
-    && ln -s ${NIFI_HOME} ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION} 
-COPY python_code/. ${SCRIPTPATH}
-	
+    && ln -s ${NIFI_HOME} ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}
+
 VOLUME ${NIFI_LOG_DIR} \
        ${NIFI_HOME}/conf \
        ${NIFI_HOME}/database_repository \

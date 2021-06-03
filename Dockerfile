@@ -29,9 +29,10 @@ RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -
     && chown -R nifi:nifi ${NIFI_BASE_DIR} \
     && apt-get update \
     && apt-get install -y jq xmlstarlet procps \
+	&& apt-get install -y vim \
 	&& apt-get install -y python3.7 python3-pip python3.7-dev
 
-RUN pip3 install -r ${PY_PATH}/requirements.txt
+RUN pip3 install -r ${PY_PATH}/requirement.txt
 USER nifi
 # Download, validate, and expand Apache NiFi Toolkit binary.
 RUN curl -fSL ${MIRROR_BASE_URL}/${NIFI_TOOLKIT_BINARY_PATH} -o ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}-bin.zip \

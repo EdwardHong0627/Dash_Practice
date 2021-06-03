@@ -1,0 +1,18 @@
+version: '1.0'
+
+services: 
+    nifi:
+        image: edward/nifi_py
+        container_name: rrrrr
+        ports: 
+            - "8080:8080"
+    mqtt:
+        image: edward/iii_mosquitto
+        container_name: eeeee
+        volumes: 
+            - "/mosquitto/data"
+            - "/mosquitto/log"
+        ports: 
+            - "1887:1887"
+            - "8087:8087"
+        

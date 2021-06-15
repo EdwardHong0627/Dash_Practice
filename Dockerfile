@@ -18,6 +18,7 @@ ENV NIFI_PID_DIR=${NIFI_HOME}/run
 ENV NIFI_LOG_DIR=${NIFI_HOME}/logs
 ENV PY_PATH=/py_script
 RUN mkdir -p ${PY_PATH}
+
 ADD sh/ ${NIFI_BASE_DIR}/scripts/
 RUN chmod -R +x ${NIFI_BASE_DIR}/scripts/*.sh
 COPY python_code/* ${PY_PATH}/
@@ -32,6 +33,7 @@ RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -
 	&& apt-get install -y vim \
 	&& apt-get install -y python3.7 python3-pip python3.7-dev
 
+RUN chown -R nifi:nifi ${PY_PATH}
 RUN pip3 install -r ${PY_PATH}/requirement.txt
 USER nifi
 # Download, validate, and expand Apache NiFi Toolkit binary.

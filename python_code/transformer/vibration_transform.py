@@ -43,7 +43,7 @@ class VibrationTransformation(object):
             all_data = all_data.dropna()
             all_data = all_data.reset_index()
             time_domain_json = all_data.to_dict('records')
-            self.__send_mqtt(all_data, 'vibration/time_domain')
+            self.__send_mqtt(time_domain_json, 'vibration/time_domain')
             self.mongo_db['time_domain'].insert_many(time_domain_json)
             return all_data
         except Exception as err:
@@ -65,7 +65,7 @@ class VibrationTransformation(object):
                 xf = fftshift(fftfreq(N, T))
                 fft_series[val + '_ticks'] = xf.round(3).tolist()
             fft_json = self.__results_to_dict(fft_series)
-            self.__send_mqtt(fft_series, 'vibration/fft')
+            self.__send_mqtt(fft_json, 'vibration/fft')
             self.mongo_db['fft'].insert_one(fft_json)
             return fftfreq, fft_series
         except Exception as err:
@@ -81,7 +81,7 @@ class VibrationTransformation(object):
                 cwt_series['coeffs_'+val] = coeffs.round(3).tolist()
                 cwt_series['freqs_'+val] = freqs.round(3).tolist()
             wavelet_json = self.__results_to_dict(cwt_series)
-            self.__send_mqtt(cwt_series, 'vibration/dwt')
+            self.__send_mqtt(wavelet_json, 'vibration/dwt')
             self.mongo_db['wavelet'].insert(wavelet_json)
             return cwt_series
         except Exception as err:
@@ -101,7 +101,7 @@ class VibrationTransformation(object):
                 envelope_series[val] = np.abs(
                     amplitude_envelope).round(3).tolist()
             envelope_json = self.__results_to_dict(envelope_series)
-            self.__send_mqtt(envelope_series.transpose(), 'vibration/envelope')
+            self.__send_mqtt(envelope_json, 'vibration/envelope')
             self.mongo_db['envelope'].insert(envelope_json)
             return envelope_series
         except Exception as err:
@@ -121,7 +121,7 @@ class VibrationTransformation(object):
                 stft_series[val + '_' + 'Zxx'] = np.abs(Zxx).round(3).tolist()
             stft_json = self.__results_to_dict(stft_series)
             self.mongo_db['stft'].insert(stft_json)
-            self.__send_mqtt(stft_series, 'vibration/stft')
+            self.__send_mqtt(stft_json, 'vibration/stft')
             return stft_series
         except Exception as err:
             logger.error(

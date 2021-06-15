@@ -1,3 +1,3 @@
 {"col": ["Z1", "Z2", "Z3","Z4","Z5"], "info_col": ["Timestamp"],
-          "dir_path": "D:\\III\\real_time",
-          "user": "iii", "password": "iii05076416", "mqtt_url": "localhost", "mqtt_port": 8087}
+          "dir_path": "/data/realtime",
+          "user": "iii", "password": "mis-12345", "mqtt_url": "192.168.1.219", "mqtt_port": 8087}

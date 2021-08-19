@@ -11,7 +11,7 @@ from scipy.signal import stft
 import json
 from pymongo import MongoClient
 from loguru import logger
-from datetime import datetime
+
 
 class VibrationTransformation(object):
 
@@ -29,6 +29,7 @@ class VibrationTransformation(object):
         self.mqtt_client.connect(
             self.config['mqtt_url'], self.config['mqtt_port'], 60)
         self.mongo_db = MongoConnector().db_connect()
+
 
     def time_domain(self, cols: list, window=60):
         try:
@@ -138,7 +139,7 @@ class VibrationTransformation(object):
                 self.mqtt_client.publish(topic, json.dumps(x, default=date_conv))
             except Exception as err:
                 logger.error(
-                    "An error occurs when transmittng {} messages:{}".format('mqtt', err))
+                    "An error occurs when transmitting {} messages:{}".format('mqtt', err))
 
     def __results_to_dict(self, result):
         try:

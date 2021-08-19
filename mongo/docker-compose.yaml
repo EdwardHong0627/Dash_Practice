@@ -1,0 +1,37 @@
+version: "3"
+
+networks:
+  test-network:
+    driver: bridge
+
+services:
+
+  mongo:
+    image: mongo
+    volumes:
+      - ~/mongo/data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - test-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=iii
+      - MONGO_INITDB_ROOT_PASSWORD=mis-12345
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - 0.0.0.0:8081:8081
+    links:
+      - mongo
+    networks:
+      - test-network
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: 3024-night
+      ME_CONFIG_BASICAUTH_USERNAME: iii
+      ME_CONFIG_BASICAUTH_PASSWORD: iii05076416
+      ME_CONFIG_MONGODB_ADMINUSERNAME: iii
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mis-12345
+
+
+

@@ -12,7 +12,7 @@ ARG NIFI_TOOLKIT_BINARY_PATH=${NIFI_TOOLKIT_BINARY_PATH:-/nifi/${NIFI_VERSION}/n
 ENV NIFI_BASE_DIR=/opt/nifi
 ENV NIFI_HOME ${NIFI_BASE_DIR}/nifi-current
 ENV NIFI_TOOLKIT_HOME ${NIFI_BASE_DIR}/nifi-toolkit-current
-ENV SCRIPTPATH=${NIFI_HOME}}/python_code
+ENV SCRIPTPATH=${NIFI_HOME}/python_code
 ENV NIFI_PID_DIR=${NIFI_HOME}/run
 ENV NIFI_LOG_DIR=${NIFI_HOME}/logs
 
@@ -26,9 +26,10 @@ RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -
     && chown -R nifi:nifi ${NIFI_BASE_DIR} \
     && apt-get update \
     && apt-get install -y jq xmlstarlet procps \
-    && apt-get install -y python3.7 python3-pip python3.7-dev \
-    && apt-get install cython cython3 | echo "y"
+    && apt-get install -y python3.8 python3-pip python3.8-dev 
 USER nifi
+
+RUN pip install cython 
 RUN pip3 install -r ${SCRIPTPATH}/requirement.txt
 
 

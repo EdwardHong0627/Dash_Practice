@@ -14,8 +14,14 @@ from loguru import logger
 
 
 class VibrationTransformation(object):
-
-    def __init__(self, df: pd.DataFrame, config, to_mqtt=True):
+    """
+    震動訊號頻域時域轉換
+    Input:
+        df: dataframe
+        config: config dict
+        to_mqtt: whether to send to mqtt
+    """
+    def __init__(self, df: pd.DataFrame, config:dict, to_mqtt:bool=True):
         self.df = df
         self.info_col = config["info_col"]
         self.to_mqtt = to_mqtt
@@ -31,7 +37,15 @@ class VibrationTransformation(object):
         self.mongo_db = MongoConnector().db_connect()
 
 
+
     def time_domain(self, cols: list, window=60):
+        """
+        Time domain features calculate mean, std, min, max ,skew, 
+            kurt, rms, and pip with window default 60 seconds.
+        Input: 
+            cols: column list which should be transformed in df
+            window: time interval used in aggregation.
+        """
         try:
             info_data = self.df[self.info_col].copy()
             raw_data = self.df[cols].copy()
@@ -54,11 +68,21 @@ class VibrationTransformation(object):
                 'time_domain', err))
 
     def fft(self, cols: list, N=None, T=None):
+        """
+        Fast fourier transform of input columns
+        Input:
+            cols: column list
+            N: window size
+            T: sample size default with len of dataframe, if data volume is too much can turn it lower to reduce output size.
+            Can refer to: https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.fft.fftfreq.html#scipy.fft.fftfreq
+        Outout:
+            Save freqlist and value in the corresponding freq with timestamp into MongoDB (2 lists and one timestamp)
+        """
         try:
             if N is None:
-                N = len(self.df)
+                N = 100
             if T is None:
-                T = 60.0 / N
+                T = 1/400.0
             fft_series = self.df.iloc[0][self.info_col]
             for idx, val in enumerate(cols):
                 signal = self.df[val].to_numpy()
@@ -76,6 +100,16 @@ class VibrationTransformation(object):
                 "An error occurs when transforming {}:{}".format('fft', err))
 
     def wavelet(self, cols: list, scales=np.arange(1, 10), wavelet='morl'):
+        """
+        Wavelet transform of input columns
+        Input:
+            cols: column list
+            scales: scaler of mother wavelet (以基準一倍當作模擬)
+            wavelet: The type of mother wavelet
+            Can refer to: https://pywavelets.readthedocs.io/en/latest/ref/cwt.html
+        Outout:
+            Save scaler list, time interval and value in the corresponding freq with timestamp into MongoDB (2 lists, a 2D matrix and one timestamp)
+        """
         try:
             cwt_series = self.df.iloc[0][self.info_col]
             for key, val in enumerate(cols):
@@ -92,6 +126,15 @@ class VibrationTransformation(object):
                 "An error occurs when transforming {}:{}".format('wavelet', err))
 
     def envelope(self, cols: list, freq=4096):
+        """
+        Energy of Fast fourier transform of input columns
+        Input:
+            cols: column list
+            freq: sample fraq
+        Outout:
+            a list containing an energy value of wave every freq.
+            (把它當成FFT的逼近取線就對惹)
+        """
         try:
             envelope_series = self.df.iloc[0][self.info_col]
             for key, val in enumerate(cols):
